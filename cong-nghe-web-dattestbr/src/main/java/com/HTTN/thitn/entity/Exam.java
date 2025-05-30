@@ -1,8 +1,9 @@
 package com.HTTN.thitn.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import jakarta.persistence.*;
-        import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "exams")
@@ -19,6 +20,7 @@ public class Exam {
 
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)
+    @JsonBackReference
     private Subject subject;
 
     @Column(nullable = false)
