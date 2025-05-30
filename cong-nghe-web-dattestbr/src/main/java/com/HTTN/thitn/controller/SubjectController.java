@@ -67,6 +67,7 @@ public class SubjectController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
+
     // giáo viên thêm hs vào
     @PostMapping("/teacher/subjects/{subjectId}/students/{studentId}")
     public ResponseEntity<?> addStudentToSubject(@PathVariable Long subjectId, @PathVariable Long studentId) {
