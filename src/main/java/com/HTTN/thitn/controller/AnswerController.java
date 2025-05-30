@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/student/answers")
 public class AnswerController {
-
     @Autowired
     private AnswerService answerService;
     // gửi đáp án cho từng câu hỏi
