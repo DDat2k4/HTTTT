@@ -29,6 +29,15 @@ public class AdminSubjectController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<SubjectResponse>> getSubjects() {
+        List<Subject> approvedSubjects = subjectService.getSubjectsByStatus(1);
+        List<SubjectResponse> response = approvedSubjects.stream()
+                .map(SubjectResponse::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/{id}/approve")
     public ResponseEntity<Void> approveSubject(@PathVariable Long id) {
         subjectService.approveSubject(id);
