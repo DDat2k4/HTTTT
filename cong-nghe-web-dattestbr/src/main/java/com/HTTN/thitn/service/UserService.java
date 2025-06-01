@@ -5,10 +5,12 @@ import com.HTTN.thitn.dto.Request.StudentUpdateRequest;
 import com.HTTN.thitn.dto.Request.TeacherUpdateRequest;
 import com.HTTN.thitn.dto.Response.UserDTO;
 import com.HTTN.thitn.entity.Role;
+import com.HTTN.thitn.entity.Subject;
 import com.HTTN.thitn.entity.User;
 import com.HTTN.thitn.repository.RoleRepository;
 import com.HTTN.thitn.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -142,18 +144,33 @@ public class UserService {
         return response;
     }
 
+    @Transactional
     public Optional<String> deleteTeacherById(Long teacherId) {
         Optional<String> response = Optional.empty();
+
         User teacher = userRepository.findById(teacherId)
                 .filter(user -> user.getRoles().stream().anyMatch(role -> role.getName().equals("TEACHER")))
                 .orElse(null);
 
         if (teacher != null) {
+            for (Subject subject : new HashSet<>(teacher.getSubjects())) {
+                subject.getTeachers().remove(teacher);
+            }
+            teacher.getSubjects().clear();
+
+            // Nếu giáo viên đồng thời là học sinh (có thể), gỡ khỏi enrolledSubjects
+            for (Subject subject : new HashSet<>(teacher.getEnrolledSubjects())) {
+                subject.getStudents().remove(teacher);
+            }
+            teacher.getEnrolledSubjects().clear();
+
             userRepository.delete(teacher);
             response = Optional.of("Giáo viên với ID " + teacherId + " đã được xóa.");
         }
+
         return response;
     }
+
 
     public void changePassword(String username, String oldPassword, String newPassword) {
         User user = userRepository.findByUsername(username)
